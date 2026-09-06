@@ -19,7 +19,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["pinn*"]
+include = ["pinn*", "use_cases*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
