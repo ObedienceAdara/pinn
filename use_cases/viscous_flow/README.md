@@ -8,9 +8,7 @@ Demonstrates reuse of the package `MLP` for a custom fluid PDE that is not handl
 
 The example uses the 1D viscous Burgers equation:
 
-$$
-u_t + 
-u\nu_x = \mu\nu_{xx}$$
+$$u_t + u u_x = \nu u_{xx}$$
 
 with an initial profile and zero Dirichlet boundary values.
 
