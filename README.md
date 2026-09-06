@@ -52,6 +52,12 @@ pinn/
 │   └── trainer.py         # PINN optimization loop
 ├── examples/
 │   └── solve_heat.py      # end-to-end training and visualization
+├── use_cases/
+│   ├── __init__.py
+│   ├── README.md
+│   ├── thermal_barrier.py     # thermal protection / insulation example
+│   ├── electronic_cooling.py  # electronics substrate example
+│   └── viscous_flow.py        # custom Burgers-equation example
 ├── tests/
 │   ├── test_model.py
 │   ├── test_physics.py
@@ -77,11 +83,21 @@ python -m pip install -e ".[dev]"
 
 ## Run
 
+Reference benchmark:
+
 ```bash
 python examples/solve_heat.py
 ```
 
-The script trains the PINN and writes a prediction/reference/error figure to `artifacts/heat_equation_solution.png`.
+Application-oriented examples:
+
+```bash
+python -m use_cases.thermal_barrier
+python -m use_cases.electronic_cooling
+python -m use_cases.viscous_flow
+```
+
+The examples under `use_cases/` deliberately import the package through its public API, showing how the library can sit inside an engineering workflow rather than only being run as a standalone benchmark.
 
 ## Test
 
@@ -100,5 +116,17 @@ pytest
 - Reproducible sampling with an explicit seed.
 - Exact-solution error evaluation for the reference heat-equation problem.
 - Lightweight unit tests and GitHub Actions CI.
+
+## Use cases
+
+The repository now includes application-style examples for:
+
+- transient thermal protection / insulation;
+- transient electronics cooling;
+- viscous convection-diffusion flow using a custom Burgers-equation residual.
+
+The first two use the standard `PINNTrainer`; the fluid-flow example shows how to reuse `pinn.MLP` and automatic differentiation when a different governing equation is required.
+
+These examples are reference implementations, not validated industrial solvers. Safety-critical engineering decisions require verification against appropriate analytical, experimental, or high-fidelity numerical methods.
 
 This is intentionally a standard baseline. Advanced additions such as adaptive sampling, loss balancing, Fourier features, hard constraints, domain decomposition, or operator learning should be layered on after this baseline is validated.
