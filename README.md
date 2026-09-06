@@ -46,25 +46,34 @@ $$
 pinn/
 ├── pinn/
 │   ├── __init__.py
-│   ├── models.py          # neural network architecture
-│   ├── physics.py         # PDE residual and exact solution
-│   ├── sampling.py        # collocation / IC / BC sampling
-│   └── trainer.py         # PINN optimization loop
+│   ├── models.py
+│   ├── physics.py
+│   ├── sampling.py
+│   └── trainer.py
 ├── examples/
-│   └── solve_heat.py      # end-to-end training and visualization
+│   └── solve_heat.py
 ├── use_cases/
 │   ├── __init__.py
 │   ├── README.md
-│   ├── thermal_barrier.py     # thermal protection / insulation example
-│   ├── electronic_cooling.py  # electronics substrate example
-│   └── viscous_flow.py        # custom Burgers-equation example
+│   ├── thermal_barrier/
+│   │   ├── README.md
+│   │   └── run.py
+│   ├── electronics_cooling/
+│   │   ├── README.md
+│   │   └── run.py
+│   └── viscous_flow/
+│       ├── README.md
+│       └── run.py
 ├── tests/
 │   ├── test_model.py
 │   ├── test_physics.py
-│   └── test_sampling.py
+│   ├── test_sampling.py
+│   ├── test_trainer.py
+│   └── test_use_cases.py
 ├── .github/workflows/ci.yml
 ├── pyproject.toml
-└── README.md
+├── README.md
+└── BROAD.md
 ```
 
 ## Install
@@ -92,18 +101,22 @@ python examples/solve_heat.py
 Application-oriented examples:
 
 ```bash
-python -m use_cases.thermal_barrier
-python -m use_cases.electronic_cooling
-python -m use_cases.viscous_flow
+python use_cases/thermal_barrier/run.py
+python use_cases/electronics_cooling/run.py
+python use_cases/viscous_flow/run.py
 ```
 
-The examples under `use_cases/` deliberately import the package through its public API, showing how the library can sit inside an engineering workflow rather than only being run as a standalone benchmark.
+The application examples import the package through its public API or reuse its core model component, showing how the implementation can be embedded in engineering workflows.
 
 ## Test
 
 ```bash
 pytest
 ```
+
+## Documentation
+
+`BROAD.md` is the detailed technical implementation guide. It documents the mathematical formulation, repository architecture, modules, classes, functions, tensor shapes, automatic-differentiation flow, loss construction, optimization, validation, and extension model.
 
 ## What is implemented
 
@@ -114,19 +127,10 @@ pytest
 - Initial-condition and boundary-condition losses.
 - Configurable loss weights and training settings.
 - Reproducible sampling with an explicit seed.
+- Optional Adam + L-BFGS optimization.
 - Exact-solution error evaluation for the reference heat-equation problem.
-- Lightweight unit tests and GitHub Actions CI.
+- Unit tests and GitHub Actions CI.
 
-## Use cases
+## Scope
 
-The repository now includes application-style examples for:
-
-- transient thermal protection / insulation;
-- transient electronics cooling;
-- viscous convection-diffusion flow using a custom Burgers-equation residual.
-
-The first two use the standard `PINNTrainer`; the fluid-flow example shows how to reuse `pinn.MLP` and automatic differentiation when a different governing equation is required.
-
-These examples are reference implementations, not validated industrial solvers. Safety-critical engineering decisions require verification against appropriate analytical, experimental, or high-fidelity numerical methods.
-
-This is intentionally a standard baseline. Advanced additions such as adaptive sampling, loss balancing, Fourier features, hard constraints, domain decomposition, or operator learning should be layered on after this baseline is validated.
+This is a standard PINN baseline for learning and extension. The thermal and viscous-flow examples are simplified technical demonstrations, not validated industrial or safety-critical solvers.
