@@ -52,6 +52,14 @@ pinn/
 │   └── trainer.py
 ├── examples/
 │   └── solve_heat.py
+├── notebooks/
+│   ├── README.md
+│   ├── 01_pinn_foundations.ipynb
+│   ├── 02_repository_implementation.ipynb
+│   ├── 03_autograd_and_pde.ipynb
+│   ├── 04_training_and_optimization.ipynb
+│   ├── 05_validation_and_visualization.ipynb
+│   └── 06_advanced_extensions.ipynb
 ├── use_cases/
 │   ├── __init__.py
 │   ├── README.md
@@ -76,6 +84,8 @@ pinn/
 
 For a deep implementation-level explanation, see [`BROAD.md`](BROAD.md).
 
+For a complete executable learning/research walkthrough, see [`notebooks/README.md`](notebooks/README.md).
+
 ## Install
 
 Python 3.10+ is required.
@@ -88,6 +98,12 @@ For development/testing:
 
 ```bash
 python -m pip install -e ".[dev]"
+```
+
+For the notebook workflow, install Jupyter separately in your environment:
+
+```bash
+python -m pip install jupyterlab
 ```
 
 ## Run
@@ -106,6 +122,14 @@ python -m use_cases.electronics_cooling.run
 python -m use_cases.viscous_flow.run
 ```
 
+Notebook suite:
+
+```bash
+jupyter lab
+```
+
+Start with `notebooks/01_pinn_foundations.ipynb` and proceed in numerical order.
+
 ## Test
 
 ```bash
@@ -118,4 +142,4 @@ GitHub Actions tests Python 3.10, 3.11, and 3.12. CI uses the CPU-only PyTorch w
 
 ## Scope
 
-This is a standard PINN baseline for research, education, and engineering experimentation. The included use cases are reference implementations, not validated industrial or safety-critical solvers. Production use requires verification against appropriate analytical, experimental, and/or high-fidelity numerical methods.
+This is a standard PINN baseline for research, education, and engineering experimentation. The included use cases and notebooks are reference implementations, not validated industrial or safety-critical solvers. Production use requires verification against appropriate analytical, experimental, and/or high-fidelity numerical methods.
