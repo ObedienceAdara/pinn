@@ -1,36 +1,44 @@
-# PINN use cases
+# PINN Use Cases
 
-This directory shows how the `pinn` package can be imported into application-style engineering workflows.
+Application-style examples showing how the `pinn` package is consumed and extended.
 
-The examples are intentionally small enough to run on a laptop, but each is framed around a physical problem rather than a synthetic neural-network task.
+## Structure
 
-## Included examples
+```text
+use_cases/
+├── README.md
+├── thermal_barrier/
+│   ├── README.md
+│   └── run.py
+├── electronics_cooling/
+│   ├── README.md
+│   └── run.py
+└── viscous_flow/
+    ├── README.md
+    └── run.py
+```
 
-| Example | Engineering interpretation | PINN formulation |
+## Use cases
+
+| Directory | Application | Method |
 | --- | --- | --- |
-| `thermal_barrier.py` | Transient conduction through a thermal protection / insulation layer | 1D heat equation |
-| `electronic_cooling.py` | Transient temperature diffusion through a cooled electronics substrate | 1D heat equation |
-| `viscous_flow.py` | Differentiable surrogate for a 1D viscous convection-diffusion flow | Burgers equation |
+| `thermal_barrier/` | Simplified transient thermal protection / insulation | Heat-equation PINN |
+| `electronics_cooling/` | Simplified transient electronics thermal diffusion | Heat-equation PINN |
+| `viscous_flow/` | 1D viscous flow demonstration | Custom Burgers residual + `pinn.MLP` |
 
-## Running the examples
+Each directory contains a small `README.md` and a runnable `run.py`.
+
+## Run
 
 From the repository root:
 
 ```bash
-pip install -e .
-python -m use_cases.thermal_barrier
-python -m use_cases.electronic_cooling
-python -m use_cases.viscous_flow
+python -m pip install -e .
+python use_cases/thermal_barrier/run.py
+python use_cases/electronics_cooling/run.py
+python use_cases/viscous_flow/run.py
 ```
-
-The examples import the package as a normal dependency:
-
-```python
-from pinn import MLP, PINNConfig, PINNTrainer, sample_heat_equation
-```
-
-The heat-transfer cases use the repository's standard `PINNTrainer`. The viscous-flow case demonstrates how the same `MLP` component can be reused to construct a custom PDE residual when the built-in heat-equation helper is not appropriate.
 
 ## Scope
 
-These are reference implementations and educational engineering demonstrations. They are not validated industrial solvers and should not be used for safety-critical predictions without verification against appropriate analytical, experimental, or high-fidelity numerical results.
+These are technical reference examples, not validated industrial or safety-critical solvers. Production use requires appropriate analytical, experimental, and/or high-fidelity numerical validation.
