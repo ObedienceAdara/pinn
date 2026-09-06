@@ -49,7 +49,7 @@ def heat_initial_condition(x: torch.Tensor) -> torch.Tensor:
 
 def heat_boundary_condition(x: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
     """Homogeneous Dirichlet boundary values at x = +/- 1."""
-    del x, t
+    del x
     return torch.zeros_like(t)
 
 
