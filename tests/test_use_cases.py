@@ -1,10 +1,17 @@
 from __future__ import annotations
 
+import importlib
 
-def test_use_cases_are_importable() -> None:
-    from use_cases import electronic_cooling, thermal_barrier, viscous_flow
 
-    assert callable(thermal_barrier.main)
-    assert callable(electronic_cooling.main)
-    assert callable(viscous_flow.main)
+def test_use_case_package_layout_and_imports() -> None:
+    modules = (
+        "use_cases.thermal_barrier.run",
+        "use_cases.electronics_cooling.run",
+        "use_cases.viscous_flow.run",
+    )
+    for module_name in modules:
+        module = importlib.import_module(module_name)
+        assert callable(module.main)
+
+    viscous_flow = importlib.import_module("use_cases.viscous_flow.run")
     assert callable(viscous_flow.burgers_residual)
