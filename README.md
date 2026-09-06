@@ -56,29 +56,29 @@ pinn/
 │   ├── __init__.py
 │   ├── README.md
 │   ├── thermal_barrier/
+│   │   ├── __init__.py
 │   │   ├── README.md
 │   │   └── run.py
 │   ├── electronics_cooling/
+│   │   ├── __init__.py
 │   │   ├── README.md
 │   │   └── run.py
 │   └── viscous_flow/
+│       ├── __init__.py
 │       ├── README.md
 │       └── run.py
 ├── tests/
-│   ├── test_model.py
-│   ├── test_physics.py
-│   ├── test_sampling.py
-│   ├── test_trainer.py
-│   └── test_use_cases.py
 ├── .github/workflows/ci.yml
 ├── pyproject.toml
-├── README.md
-└── BROAD.md
+├── BROAD.md
+└── README.md
 ```
+
+For a deep implementation-level explanation, see [`BROAD.md`](BROAD.md).
 
 ## Install
 
-Python 3.10+ is recommended.
+Python 3.10+ is required.
 
 ```bash
 python -m pip install -e .
@@ -101,12 +101,10 @@ python examples/solve_heat.py
 Application-oriented examples:
 
 ```bash
-python use_cases/thermal_barrier/run.py
-python use_cases/electronics_cooling/run.py
-python use_cases/viscous_flow/run.py
+python -m use_cases.thermal_barrier.run
+python -m use_cases.electronics_cooling.run
+python -m use_cases.viscous_flow.run
 ```
-
-The application examples import the package through its public API or reuse its core model component, showing how the implementation can be embedded in engineering workflows.
 
 ## Test
 
@@ -114,23 +112,10 @@ The application examples import the package through its public API or reuse its 
 pytest
 ```
 
-## Documentation
+## CI
 
-`BROAD.md` is the detailed technical implementation guide. It documents the mathematical formulation, repository architecture, modules, classes, functions, tensor shapes, automatic-differentiation flow, loss construction, optimization, validation, and extension model.
-
-## What is implemented
-
-- Fully-connected multilayer perceptron with `tanh` activations.
-- Input normalization from physical coordinates to `[-1, 1]`.
-- PyTorch autograd for first- and second-order PDE derivatives.
-- Interior collocation points for physics loss.
-- Initial-condition and boundary-condition losses.
-- Configurable loss weights and training settings.
-- Reproducible sampling with an explicit seed.
-- Optional Adam + L-BFGS optimization.
-- Exact-solution error evaluation for the reference heat-equation problem.
-- Unit tests and GitHub Actions CI.
+GitHub Actions tests Python 3.10, 3.11, and 3.12. CI uses the CPU-only PyTorch wheel index because the workflow runs on CPU runners. It also builds a wheel and validates imports from outside the repository tree so packaging regressions are detected.
 
 ## Scope
 
-This is a standard PINN baseline for learning and extension. The thermal and viscous-flow examples are simplified technical demonstrations, not validated industrial or safety-critical solvers.
+This is a standard PINN baseline for research, education, and engineering experimentation. The included use cases are reference implementations, not validated industrial or safety-critical solvers. Production use requires verification against appropriate analytical, experimental, and/or high-fidelity numerical methods.
