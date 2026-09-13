@@ -1,8 +1,14 @@
 # Physics-Informed Neural Network
 
-A clean PyTorch implementation of a standard Physics-Informed Neural Network (PINN) for solving the 1D heat equation.
+A clean PyTorch implementation of a standard Physics-Informed Neural Network (PINN), starting from a 1D heat-equation baseline and generalized into a dimension-agnostic framework (`pinn/core`) for building and training PINNs on new PDEs.
 
-## Problem
+## Two layers
+
+**Baseline** (`pinn/models.py`, `physics.py`, `sampling.py`, `trainer.py`) — the original 1D heat-equation implementation, unchanged. See the Problem section below and [`BROAD.md`](BROAD.md) for a line-by-line walkthrough.
+
+**Generalized framework** (`pinn/core/`, `pinn/problems/`) — arbitrary-dimension domains, a swappable PDE/boundary-condition interface, Latin Hypercube/Sobol/adaptive sampling, hard-constraint and Fourier-feature network options, gradient-aware and self-adaptive loss weighting, and causal training for transient PDEs. Includes three concrete problems (`heat1d`, `poisson2d`, `burgers1d`) and three runnable examples that reproduce the heat-equation baseline, solve a genuinely 2D problem, and solve Burgers' equation with adaptive resampling + causal weighting. See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the design, measured results, and known limitations.
+
+## Baseline problem
 
 The reference problem is
 
@@ -46,43 +52,36 @@ $$
 pinn/
 ├── pinn/
 │   ├── __init__.py
-│   ├── models.py
-│   ├── physics.py
-│   ├── sampling.py
-│   └── trainer.py
+│   ├── models.py, physics.py, sampling.py, trainer.py    # baseline (unchanged)
+│   ├── core/                                              # generalized framework
+│   │   ├── domain.py, autodiff.py, sampling.py
+│   │   ├── pde.py, boundary.py, networks.py
+│   │   ├── weighting.py, causal.py
+│   │   └── trainer.py, problem.py
+│   └── problems/                                          # concrete equations on core/
+│       ├── heat1d.py, poisson2d.py, burgers1d.py
 ├── examples/
-│   └── solve_heat.py
+│   ├── solve_heat.py                    # baseline
+│   ├── solve_heat1d_general.py          # baseline problem, generalized framework, soft vs hard+causal
+│   ├── solve_poisson_2d.py              # genuinely 2D problem, hard vs soft
+│   └── solve_burgers_general.py         # advection-dominated, adaptive resampling + causal weighting
 ├── notebooks/
 │   ├── README.md
-│   ├── 01_pinn_foundations.ipynb
-│   ├── 02_repository_implementation.ipynb
-│   ├── 03_autograd_and_pde.ipynb
-│   ├── 04_training_and_optimization.ipynb
-│   ├── 05_validation_and_visualization.ipynb
-│   └── 06_advanced_extensions.ipynb
+│   └── 01_pinn_foundations.ipynb ... 06_advanced_extensions.ipynb
 ├── use_cases/
-│   ├── __init__.py
-│   ├── README.md
-│   ├── thermal_barrier/
-│   │   ├── __init__.py
-│   │   ├── README.md
-│   │   └── run.py
-│   ├── electronics_cooling/
-│   │   ├── __init__.py
-│   │   ├── README.md
-│   │   └── run.py
-│   └── viscous_flow/
-│       ├── __init__.py
-│       ├── README.md
-│       └── run.py
-├── tests/
+│   ├── __init__.py, README.md
+│   ├── thermal_barrier/, electronics_cooling/, viscous_flow/   # still baseline-API, not yet migrated
+├── tests/                                # 8 original + 46 new, all passing
 ├── .github/workflows/ci.yml
 ├── pyproject.toml
-├── BROAD.md
+├── BROAD.md          # baseline, line-by-line
+├── ARCHITECTURE.md   # generalized framework: design, results, limitations
 └── README.md
 ```
 
-For a deep implementation-level explanation, see [`BROAD.md`](BROAD.md).
+For a deep implementation-level explanation of the baseline, see [`BROAD.md`](BROAD.md).
+
+For the generalized framework's design rationale and measured results, see [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 For a complete executable learning/research walkthrough, see [`notebooks/README.md`](notebooks/README.md).
 
@@ -108,13 +107,21 @@ python -m pip install jupyterlab
 
 ## Run
 
-Reference benchmark:
+Baseline reference benchmark:
 
 ```bash
 python examples/solve_heat.py
 ```
 
-Application-oriented examples:
+Generalized framework examples:
+
+```bash
+python examples/solve_heat1d_general.py   # parity check + hard-constraint/causal comparison
+python examples/solve_poisson_2d.py       # 2D Poisson, hard vs soft constrained
+python examples/solve_burgers_general.py  # Burgers with adaptive resampling + causal weighting
+```
+
+Application-oriented use cases (still on the baseline API):
 
 ```bash
 python -m use_cases.thermal_barrier.run
@@ -142,4 +149,4 @@ GitHub Actions tests Python 3.10, 3.11, and 3.12. CI uses the CPU-only PyTorch w
 
 ## Scope
 
-This is a standard PINN baseline for research, education, and engineering experimentation. The included use cases and notebooks are reference implementations, not validated industrial or safety-critical solvers. Production use requires verification against appropriate analytical, experimental, and/or high-fidelity numerical methods.
+This is a standard PINN baseline and framework for research, education, and engineering experimentation — not a validated industrial or safety-critical solver, and not (yet) benchmarked against a real mesh-based simulation (ANSYS, OpenFOAM). See "What this does NOT do" in [`ARCHITECTURE.md`](ARCHITECTURE.md) for the current honest limitations. Production use requires verification against appropriate analytical, experimental, and/or high-fidelity numerical methods.
