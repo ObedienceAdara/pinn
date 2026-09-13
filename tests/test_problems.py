@@ -13,6 +13,7 @@ def test_heat1d_soft_constraint_has_four_boundary_terms() -> None:
 def test_heat1d_exact_solution_matches_initial_condition_at_t0() -> None:
     x = torch.linspace(-1, 1, 10).unsqueeze(1)
     t0 = torch.zeros_like(x)
+    points = torch.cat([x, t0], dim=1)
     exact = heat1d.exact_solution(x, t0)
     assert torch.allclose(exact, heat1d.initial_condition(x), atol=1e-6)
 

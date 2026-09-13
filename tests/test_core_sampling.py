@@ -63,7 +63,7 @@ def test_adaptive_resampler_favors_higher_residual_region() -> None:
 def test_laplacian_matches_known_analytic_function() -> None:
     # u = x^2 + y^2 has Laplacian == 4 everywhere.
     points = torch.rand(20, 2, requires_grad=True)
-    u = points[:, 0:1] ** 2 + points[:, 1:2] ** 2
+    u = (points[:, 0:1] ** 2 + points[:, 1:2] ** 2)
     lap = laplacian(u, points, spatial_indices=[0, 1])
     assert torch.allclose(lap, torch.full_like(lap, 4.0), atol=1e-4)
 
