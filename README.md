@@ -2,50 +2,22 @@
 
 A PyTorch implementation of Physics-Informed Neural Networks (PINNs), evolving from a transparent 1D heat-equation example into a reusable, dimension-agnostic framework for experimenting with different PDEs, domains, boundary conditions, sampling strategies, neural architectures, and training methods.
 
-> The repository keeps the original implementation intact while adding a generalized architecture on top of it. This makes the project useful both as a clear PINN learning reference and as a research/engineering codebase for experimenting with different equations, domains, constraints, sampling strategies, and training methods.
+> The repository keeps the original implementation intact while adding a generalized architecture on top of it. It is designed to be useful as both a PINN learning reference and a research/engineering codebase for experimentation.
 
 ## Overview
 
-This repository intentionally contains two layers:
+This repository contains two layers:
 
-1. **The original baseline** — a small, readable PINN for the transient 1D heat equation.
-2. **The generalized framework** — reusable abstractions for building PINNs across dimensions and PDEs without rewriting the training loop.
+1. **Original 1D PINN baseline** — a small implementation of the transient 1D heat equation with a fixed domain, explicit physics residual, collocation sampling, weighted losses, and Adam/L-BFGS training.
+2. **Generalized PINN framework** — reusable abstractions that separate the domain, PDE, boundary conditions, sampling, network architecture, loss weighting, causal training, and optimization from any one equation.
 
-The baseline remains available as a reference implementation and keeps its original public API. The generalized implementation lives alongside it rather than replacing it.
+The original baseline remains available as a reference and preserves its public API. The generalized framework lives alongside it rather than replacing it.
 
 ## Baseline: 1D heat equation
 
-The reference problem is
+The reference problem is the transient 1D heat equation on a fixed spatial and temporal domain, with a sinusoidal initial condition and homogeneous Dirichlet boundary conditions. Its analytical solution is used for validation.
 
-$$
-u_t = \alpha u_{xx}, \qquad x \in [-1,1],\; t \in [0,1].
-$$
-
-with
-
-$$
-u(x,0)=\sin(\pi x),
-$$
-
-and homogeneous Dirichlet boundary conditions
-
-$$
-u(-1,t)=u(1,t)=0.
-$$
-
-Its analytical solution is
-
-$$
-u(x,t)=e^{-\alpha\pi^2t}\sin(\pi x).
-$$
-
-The network represents $u_\theta(x,t)$ and automatic differentiation provides the derivatives needed for the PDE residual:
-
-$$
-r_\theta = \frac{\partial u_\theta}{\partial t} - \alpha\frac{\partial^2 u_\theta}{\partial x^2}.
-$$
-
-The baseline implementation is contained in:
+The baseline implementation lives in:
 
 ```text
 pinn/models.py
@@ -54,11 +26,11 @@ pinn/sampling.py
 pinn/trainer.py
 ```
 
-See [`BROAD.md`](BROAD.md) for the detailed implementation walkthrough.
+See [`BROAD.md`](BROAD.md) for the detailed implementation walkthrough, including the PDE formulation, automatic differentiation, sampling, loss construction, optimization, and validation.
 
 ## Generalized framework
 
-The generalized system is built around a reusable problem pipeline:
+The generalized system is built around a reusable pipeline:
 
 ```text
 Domain
@@ -67,7 +39,7 @@ PDE + Boundary Conditions
   ↓
 Collocation / Boundary Sampling
   ↓
-Neural Network
+Neural Network / Constraint Ansatz
   ↓
 Loss Weighting
   ↓
@@ -76,7 +48,7 @@ GeneralTrainer
 Validation / Diagnostics
 ```
 
-A new PDE is represented through a `PDE.residual(model, points)` implementation. The rest of the infrastructure can then be reused.
+A new equation is represented through a `PDE.residual(model, points)` implementation. The rest of the infrastructure can then be reused without copying the training loop.
 
 ### Core capabilities
 
@@ -104,17 +76,23 @@ A new PDE is represented through a `PDE.residual(model, points)` implementation.
 
 ## Included PDE problems
 
-### `heat1d`
+### Heat equation — 1D
 
-Reimplements the original heat equation through the generalized framework, providing a direct parity check between the old and new APIs.
+`pinn/problems/heat1d.py`
 
-### `poisson2d`
+Reimplements the original heat problem through the generalized abstractions and provides a parity path between the baseline and generalized APIs.
 
-A genuinely two-dimensional problem that demonstrates why the dimension-agnostic `Domain` and generalized training abstractions matter.
+### Poisson equation — 2D
 
-### `burgers1d`
+`pinn/problems/poisson2d.py`
 
-A nonlinear, advection-dominated problem migrated onto the generalized framework. The example combines adaptive residual sampling with causal weighting.
+A genuinely two-dimensional problem demonstrating that the new domain and trainer abstractions are not limited to the original 1D time-dependent case.
+
+### Burgers equation — 1D
+
+`pinn/problems/burgers1d.py`
+
+A nonlinear, advection-dominated problem migrated onto the generalized framework. Its example combines adaptive residual sampling with causal weighting.
 
 ## Examples
 
@@ -142,7 +120,7 @@ python -m use_cases.viscous_flow.run
 
 ## Measured results
 
-The following are representative single-seed runs from this repository. They are project measurements, not general claims about PINNs or rigorous multi-seed ablations.
+The following are representative single-seed runs recorded in the repository. They are project measurements rather than general claims about PINNs or rigorous multi-seed ablations.
 
 | Problem | Configuration | Result |
 |---|---|---:|
@@ -153,9 +131,9 @@ The following are representative single-seed runs from this repository. They are
 | Burgers 1D | Adam only, 2500 epochs | 0.20 max IC error |
 | Burgers 1D | Causal weighting + L-BFGS, 3000 epochs | 0.0052 max IC error |
 
-The heat and Poisson experiments show improved error in the hard-constraint runs. The Burgers experiment shows a much larger improvement after adding causal weighting and L-BFGS. Because these configurations are not matched, multi-seed ablation studies would be needed before drawing stronger conclusions.
+The heat and Poisson experiments show lower error in the hard-constraint runs. The Burgers experiment shows a larger improvement after adding causal weighting and L-BFGS. Because these configurations differ and are single-seed runs, stronger conclusions require matched multi-seed ablations.
 
-See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the complete experimental context and limitations.
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the experimental setup, interpretation, engineering trade-offs, and known limitations.
 
 ## Repository structure
 
@@ -234,17 +212,17 @@ python -m pip install jupyterlab
 
 ## Testing
 
-Run the complete suite with:
+Run the complete test suite with:
 
 ```bash
 pytest
 ```
 
-The test suite covers both the original baseline and the generalized framework, including automatic differentiation, domains, boundary conditions, sampling, network constraints, loss weighting, causal training, trainer behavior, and the included PDE problems.
+The suite covers both the original baseline and the generalized framework, including automatic differentiation, domain behavior, boundary conditions, sampling, network constraints, loss weighting, causal training, trainer behavior, and the included PDE problems.
 
 ## Notebooks
 
-[`notebooks/main.ipynb`](notebooks/main.ipynb) is the canonical end-to-end notebook. It connects the PDE formulation to the PyTorch implementation, automatic differentiation, collocation sampling, composite losses, optimization, analytical validation, residual diagnostics, adaptive refinement, inverse parameter identification, and the reusable package API.
+[`notebooks/main.ipynb`](notebooks/main.ipynb) is the canonical end-to-end implementation and learning walkthrough. It connects the mathematical problem to the PyTorch implementation, automatic differentiation, collocation sampling, composite losses, optimization, analytical validation, residual diagnostics, adaptive refinement, inverse parameter identification, and the reusable package API.
 
 Focused notebooks provide deeper studies:
 
@@ -259,9 +237,9 @@ See [`notebooks/README.md`](notebooks/README.md) for the notebook roadmap.
 
 ## Adding a new PDE
 
-The generalized architecture is designed so that the equation-specific part is isolated from the rest of the training system.
+The main architectural payoff is that a new equation does not need a copied training loop.
 
-Conceptually:
+Conceptually, a new PDE provides a residual method:
 
 ```python
 class Wave1D(PDE):
@@ -270,13 +248,13 @@ class Wave1D(PDE):
 
     def residual(self, model, points):
         u = model(points)
-        # compute u_tt and u_xx with pinn.core.autodiff
+        # compute the required derivatives with pinn.core.autodiff
         return u_tt - self.c**2 * u_xx
 ```
 
-The same domain, sampling, boundary-condition, network, weighting, and trainer infrastructure can then be reused.
+The same `Domain`, sampling, boundary-condition infrastructure, network components, weighting strategies, and `GeneralTrainer` can then be reused.
 
-This pattern is demonstrated concretely by the included `heat1d`, `poisson2d`, and `burgers1d` problems.
+The included `heat1d`, `poisson2d`, and `burgers1d` problems demonstrate this pattern.
 
 ## Documentation
 
@@ -294,7 +272,7 @@ This project is intended for research, education, and engineering experimentatio
 
 The generalized framework is not presented as a replacement for mature mesh-based methods such as ANSYS or OpenFOAM. The included problems have analytical validation where an exact solution is available, but the project is not yet a comprehensive benchmark against high-fidelity CFD/FEA workflows.
 
-The current hard Dirichlet ansatz also has deliberate limits: transient homogeneous spatial conditions and steady prescribed Dirichlet data have separate constructions; general transient nonzero spatial Dirichlet data is not silently approximated. Neumann conditions remain soft constraints, while periodicity uses a dedicated embedding mechanism.
+The current hard Dirichlet ansatz has deliberate limits: transient homogeneous spatial conditions and steady prescribed Dirichlet data use separate constructions; general transient nonzero spatial Dirichlet data is not silently approximated. Neumann conditions remain soft constraints, while periodicity uses a dedicated embedding mechanism.
 
 Production use requires verification against appropriate analytical, experimental, and/or high-fidelity numerical references.
 
