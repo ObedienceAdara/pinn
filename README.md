@@ -2,6 +2,8 @@
 
 A PyTorch implementation of Physics-Informed Neural Networks (PINNs), evolving from a transparent 1D heat-equation example into a reusable, dimension-agnostic framework for experimenting with different PDEs, domains, boundary conditions, sampling strategies, neural architectures, and training methods.
 
+> The repository keeps the original implementation intact while adding a generalized architecture on top of it. This makes the project useful both as a clear PINN learning reference and as a research/engineering codebase for experimenting with different equations, domains, constraints, sampling strategies, and training methods.
+
 ## Overview
 
 This repository intentionally contains two layers:
@@ -274,6 +276,8 @@ class Wave1D(PDE):
 
 The same domain, sampling, boundary-condition, network, weighting, and trainer infrastructure can then be reused.
 
+This pattern is demonstrated concretely by the included `heat1d`, `poisson2d`, and `burgers1d` problems.
+
 ## Documentation
 
 - [`BROAD.md`](BROAD.md) — detailed explanation of the original 1D baseline.
@@ -282,7 +286,7 @@ The same domain, sampling, boundary-condition, network, weighting, and trainer i
 
 ## CI
 
-GitHub Actions tests Python 3.10, 3.11, and 3.12. The workflow uses the CPU-only PyTorch wheel index for CPU runners, builds a wheel, verifies imports outside the repository tree, and runs the test suite.
+GitHub Actions tests the package across Python 3.10, 3.11, and 3.12. The workflow uses the CPU-only PyTorch wheel index for CPU runners, builds a wheel, verifies imports outside the repository tree, and runs the test suite.
 
 ## Scope and limitations
 
