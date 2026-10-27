@@ -34,6 +34,7 @@ from pinn.core import (
 from pinn.problems import heat1d
 from validate_openfoam_heat import read_scalar_field
 
+
 def exact_solution(x: np.ndarray, time: float, alpha: float) -> np.ndarray:
     return np.exp(-alpha * np.pi**2 * time) * np.sin(np.pi * x)
 
