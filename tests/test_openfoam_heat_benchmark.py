@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import math
 import re
 import sys
@@ -9,8 +10,10 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "benchmarks" / "openfoam_heat1d"))
+sys.path.insert(0, str(ROOT / "scripts"))
 
 from create_case import create_case  # noqa: E402
+from validate_openfoam_heat import read_scalar_field  # noqa: E402
 
 
 def _read_initial_values(path: Path) -> list[float]:
@@ -87,3 +90,16 @@ def test_case_generator_refuses_to_overwrite_existing_case(tmp_path: Path) -> No
 def test_case_generator_rejects_invalid_parameters(tmp_path: Path, kwargs: dict) -> None:
     with pytest.raises(ValueError):
         create_case(tmp_path / "invalid", **kwargs)
+
+
+def test_validation_scripts_parse_and_read_generated_field(tmp_path: Path) -> None:
+    case = create_case(tmp_path / "parser_case", cells=8)
+    values = read_scalar_field(case / "0" / "T")
+    assert len(values) == 8
+    assert values[0] < 0 and values[-1] > 0
+
+    for script in (
+        ROOT / "scripts" / "validate_openfoam_heat.py",
+        ROOT / "scripts" / "compare_pinn_openfoam_heat.py",
+    ):
+        ast.parse(script.read_text(encoding="utf-8"), filename=str(script))

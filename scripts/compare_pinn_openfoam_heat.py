@@ -32,20 +32,7 @@ from pinn.core import (
     HardDirichletAnsatz,
 )
 from pinn.problems import heat1d
-import re
-
-
-def read_scalar_field(path: Path) -> np.ndarray:
-    text = path.read_text(encoding="utf-8")
-    match = re.search(r"internalField\\s+nonuniform\\s+List<scalar>\\s+(\\d+)\\s*\\((.*?)\\)\\s*;", text, re.DOTALL)
-    if match is None:
-        raise ValueError(f"Could not parse ASCII scalar field: {path}")
-    expected = int(match.group(1))
-    values = np.fromstring(match.group(2), sep=" ")
-    if values.size != expected:
-        raise ValueError(f"{path}: expected {expected} values, got {values.size}")
-    return values
-
+from validate_openfoam_heat import read_scalar_field
 
 def exact_solution(x: np.ndarray, time: float, alpha: float) -> np.ndarray:
     return np.exp(-alpha * np.pi**2 * time) * np.sin(np.pi * x)

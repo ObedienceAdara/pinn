@@ -53,10 +53,11 @@ laplacianFoam
 
 ## Generate and run the refined case
 
-Use a separate directory to preserve the coarse-case results:
+Set `REPO_ROOT` to the absolute path of the cloned repository, return to it before creating the refined case, and use a separate directory to preserve the coarse-case results:
 
 ```bash
-python3 "$OLDPWD/benchmarks/openfoam_heat1d/create_case.py" \
+cd "$REPO_ROOT"
+python3 benchmarks/openfoam_heat1d/create_case.py \
   --output "$FOAM_RUN/heat1d_pinn_refined" \
   --cells 800 --alpha 0.1 --delta-t 0.000125 --end-time 1 --write-interval 0.01
 
@@ -66,7 +67,7 @@ checkMesh
 laplacianFoam
 ```
 
-If your shell's `OLDPWD` is not the repository root, use the absolute path to `benchmarks/openfoam_heat1d/create_case.py`. The generator refuses to overwrite a non-empty output directory; choose a new directory when regenerating.
+The generator refuses to overwrite a non-empty output directory; choose a new directory when regenerating.
 
 The time step and mesh are both refined in the reported coarse-versus-refined comparison. That comparison demonstrates improvement under the combined refinement, but does not isolate spatial and temporal convergence rates individually.
 
