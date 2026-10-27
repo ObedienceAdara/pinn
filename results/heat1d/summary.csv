@@ -1,0 +1,22 @@
+configuration,evaluation_grid,metric,value,notes
+OpenFOAM coarse,200 cells; final time t=1,relative_l2_vs_exact,5.679780e-04,Reported final-time metric; time step 0.001.
+OpenFOAM coarse,200 cells; final time t=1,max_absolute_error,2.116637e-04,Reported final-time metric.
+OpenFOAM refined,800 cells; final time t=1,relative_l2_vs_exact,6.595060e-05,Reported final-time metric; time step 0.000125.
+OpenFOAM refined,800 cells; final time t=1,max_absolute_error,2.458012e-05,Reported final-time metric.
+OpenFOAM refined,800 cells x 101 times,space_time_relative_l2_vs_exact,2.856959e-05,Flattened space-time arrays; values reported by the comparison script.
+Original baseline PINN,800 cell centres x 101 times,space_time_relative_l2_vs_exact,6.077765e-04,Seed 42; 3000 Adam epochs and L-BFGS; reported comparison run.
+Original baseline PINN,800 cell centres x 101 times; t=1,time_slice_relative_l2_vs_exact,1.627641e-03,Worst selected-time value in the reported baseline comparison was at final time.
+Generalized soft PINN,200 x 200 evaluation grid,relative_l2_vs_exact,5.827600e-04,Reported by examples/solve_heat1d_general.py; this grid differs from the common OpenFOAM grid.
+Generalized hard PINN + causal,200 x 200 evaluation grid,relative_l2_vs_exact,9.256300e-05,Reported by examples/solve_heat1d_general.py; this grid differs from the common OpenFOAM grid.
+Hard PINN + causal,800 cell centres x 101 times,space_time_relative_l2_vs_exact,9.247381e-05,"Seed 42; 3000 epochs, L-BFGS; evaluation grid shared with OpenFOAM."
+Hard PINN + causal,101 time slices,mean_per_time_relative_l2_vs_exact,1.037721e-04,Each time slice receives equal weight in this aggregate.
+Hard PINN + causal,101 time slices,rms_per_time_relative_l2_vs_exact,1.128055e-04,RMS of the 101 per-time relative L2 errors.
+Hard PINN + causal,101 time slices,median_per_time_relative_l2_vs_exact,9.591615e-05,Median of the 101 per-time relative L2 errors.
+Hard PINN + causal,101 time slices; worst at t=1,worst_per_time_relative_l2_vs_exact,2.179780e-04,Worst reported time-slice error occurred at t=1.
+Hard PINN + causal,800 cell centres x 101 times,space_time_relative_l2_pinn_vs_openfoam_normalized_exact,9.883883e-05,Difference norm divided by norm of exact space-time field.
+Hard PINN without causal,800 cell centres x 101 times,space_time_relative_l2_vs_exact,9.994022e-05,Seed 42; same nominal architecture and training settings as causal run.
+Hard PINN without causal,101 time slices,mean_per_time_relative_l2_vs_exact,1.008459e-04,Each time slice receives equal weight in this aggregate.
+Hard PINN without causal,101 time slices,rms_per_time_relative_l2_vs_exact,1.029896e-04,RMS of the 101 per-time relative L2 errors.
+Hard PINN without causal,101 time slices,median_per_time_relative_l2_vs_exact,1.041906e-04,Median of the 101 per-time relative L2 errors.
+Hard PINN without causal,101 time slices; worst at t=1,worst_per_time_relative_l2_vs_exact,1.513468e-04,Worst reported time-slice error occurred at t=1.
+Hard PINN without causal,800 cell centres x 101 times,space_time_relative_l2_pinn_vs_openfoam_normalized_exact,1.037364e-04,Difference norm divided by norm of exact space-time field.

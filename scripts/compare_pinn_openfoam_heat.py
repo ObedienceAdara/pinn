@@ -213,9 +213,11 @@ def main() -> None:
     dx = 2.0 / n_cells
     x = -1.0 + (np.arange(n_cells) + 0.5) * dx
 
-    if torch.cuda.is_available():
+    if args.model == "baseline" and torch.cuda.is_available():
         device = torch.device("cuda")
     else:
+        # The generalized heat problem currently creates its point tensors on CPU.
+        # Keep those runs on CPU to avoid a model/tensor device mismatch.
         device = torch.device("cpu")
     print(
         f"Training model={args.model}, causal={args.causal}, device={device}; "
