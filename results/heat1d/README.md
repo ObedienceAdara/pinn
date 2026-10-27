@@ -1,6 +1,6 @@
 # Recorded 1-D heat validation results
 
-This directory records measured results from the OpenFOAM/PINN experiment performed with the settings in ../benchmarks/openfoam_heat1d/README.md. The detailed narrative report is intentionally not included yet; it will be added separately.
+This directory records measured results from the OpenFOAM/PINN experiment performed with the settings in ../../benchmarks/openfoam_heat1d/README.md. The detailed narrative report is intentionally not included yet; it will be added separately.
 
 ## Main result
 
