@@ -256,6 +256,15 @@ The same `Domain`, sampling, boundary-condition infrastructure, network componen
 
 The included `heat1d`, `poisson2d`, and `burgers1d` problems demonstrate this pattern.
 
+
+## OpenFOAM validation benchmark
+
+The repository includes a reproducible 1D transient heat-diffusion benchmark that compares the PINN with OpenFOAM Foundation v14 and an analytical solution. The case generator, run instructions, solver configuration, and limitations are documented in [the OpenFOAM heat benchmark](benchmarks/openfoam_heat1d/README.md).
+
+The reported runs show that hard-constrained PINNs improve on the soft-constrained baseline for this problem, while the refined OpenFOAM calculation has the lowest measured error against the analytical solution. The causal-weighting ablation is mixed across error metrics and uses a single seed, so it should be treated as an exploratory result rather than a universal conclusion.
+
+See [the recorded benchmark results](results/heat1d/README.md) and run the scripts under `scripts/` to reproduce the comparisons. Generated simulation output is not stored in the repository.
+
 ## Documentation
 
 - [`BROAD.md`](BROAD.md) — detailed explanation of the original 1D baseline.
